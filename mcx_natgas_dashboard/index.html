@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MCX Natural Gas | Trading Intelligence</title>
+<style>
+:root{--bg:#09111f;--panel:#111d30;--panel2:#15243a;--line:#263750;--text:#e8f0fb;--muted:#93a7c2;--cyan:#53d7e8;--green:#36d399;--red:#fb7185;--amber:#fbbf24;--blue:#7aa7ff;--shadow:0 10px 30px rgba(0,0,0,.22)}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(1000px 500px at 15% -10%,#152c48 0,transparent 65%),var(--bg);color:var(--text);font:14px/1.45 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:22px clamp(16px,3vw,42px);border-bottom:1px solid var(--line);background:rgba(9,17,31,.86);position:sticky;top:0;z-index:10;backdrop-filter:blur(14px)}
+.brand{display:flex;align-items:center;gap:13px}.logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,#49d9e7,#4779ea);display:grid;place-items:center;color:#071323;font-weight:900;font-size:20px;box-shadow:0 6px 22px #36c5df33}.brand h1{font-size:17px;margin:0;letter-spacing:.2px}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.top-actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:#15243a;color:var(--text);border-radius:9px;padding:9px 12px;font-weight:650;cursor:pointer}.btn:hover{border-color:var(--cyan)}.btn.primary{background:linear-gradient(135deg,#2cc3d3,#467de8);color:#061323;border:0}.btn.small{font-size:12px;padding:7px 10px}
+.wrap{max-width:1600px;margin:auto;padding:22px clamp(14px,3vw,42px) 50px}.notice{border:1px solid #856a2b;background:#302718;color:#f9dfa0;padding:12px 15px;border-radius:11px;margin-bottom:18px;font-size:12px}.notice strong{color:#ffe9b5}.grid{display:grid;gap:14px}.kpis{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:14px}.card{background:linear-gradient(180deg,rgba(20,34,54,.98),rgba(15,27,44,.98));border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);min-width:0}.kpi{padding:15px 17px}.eyebrow{font-size:10px;letter-spacing:1.1px;color:var(--muted);text-transform:uppercase;font-weight:800}.value{font-size:23px;font-weight:800;letter-spacing:-.5px;margin:5px 0 1px}.sub{font-size:11px;color:var(--muted)}.up{color:var(--green)}.down{color:var(--red)}.neutral{color:var(--amber)}
+.main-grid{grid-template-columns:1.18fr .82fr;align-items:start}.section{padding:17px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}.section-head h2{font-size:15px;margin:0}.section-head span{font-size:11px;color:var(--muted)}.charts{grid-template-columns:1fr 1fr;margin-top:14px}.chartbox{height:355px;overflow:hidden;border-radius:10px;background:#0b1524;border:1px solid var(--line)}.chartbox .tradingview-widget-container,.chartbox .tradingview-widget-container__widget{height:100%;width:100%}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.field{display:flex;flex-direction:column;gap:5px;min-width:0}.field label{font-size:11px;color:var(--muted);font-weight:700}.field input,.field select{width:100%;background:#0b1727;border:1px solid #30435d;border-radius:8px;color:var(--text);padding:9px 10px;outline:none;min-width:0;font:inherit}.field input:focus,.field select:focus{border-color:var(--cyan);box-shadow:0 0 0 2px #53d7e822}.field .hint{font-size:10px;color:#7890ae}.full{grid-column:1/-1}.divider{height:1px;background:var(--line);margin:14px 0}.checkrow{display:flex;gap:14px;flex-wrap:wrap;margin-top:11px}.check{display:flex;align-items:center;gap:7px;color:#c5d2e3;font-size:11px}.check input{accent-color:var(--cyan)}.score-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}.score{padding:12px;border:1px solid var(--line);border-radius:10px;background:#0c1829}.score .n{font-size:25px;font-weight:850;margin:2px 0}.signal{margin-top:12px;border-radius:12px;padding:14px;border:1px solid var(--line);background:#0b1727}.signal .state{font-size:20px;font-weight:900;letter-spacing:.5px}.signal p{color:var(--muted);font-size:11px;margin:5px 0 0}.pill{display:inline-flex;align-items:center;gap:6px;font-size:10px;padding:4px 8px;border-radius:99px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;background:#273449;color:#cfdaea}.pill.green{background:#0d3b35;color:#7bf0c6}.pill.red{background:#461f2c;color:#ff9bac}.pill.amber{background:#46371b;color:#ffdc82}
+.weather-grid{grid-template-columns:repeat(3,1fr);gap:8px}.city{padding:10px;border:1px solid var(--line);border-radius:9px;background:#0c1829}.city b{font-size:11px}.city .temp{font-size:18px;font-weight:800;margin:4px 0}.city small{color:var(--muted);font-size:10px}.weather-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.weather-stat{background:#0c1829;border:1px solid var(--line);border-radius:9px;padding:10px}.weather-stat strong{display:block;font-size:18px}.weather-stat span{font-size:10px;color:var(--muted)}.table{width:100%;border-collapse:collapse;font-size:11px}.table th,.table td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}.table th{color:var(--muted);font-weight:700}.table td:last-child{text-align:right}.status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;margin-right:6px}.muted{color:var(--muted)}.footer{color:#7388a4;font-size:10px;text-align:center;margin:23px auto 0;max-width:950px}.links{display:flex;gap:10px;flex-wrap:wrap}.links a{font-size:11px;color:#8fbaff;text-decoration:none}.links a:hover{text-decoration:underline}.risk-result{margin-top:10px;padding:11px;border-radius:9px;background:#0c1829;border:1px solid var(--line);font-size:12px}.risk-result b{font-size:17px}.section-note{font-size:10px;color:#8298b6;margin-top:8px}.tag{font-size:10px;color:#8ca5c6;border:1px solid #31445f;padding:3px 7px;border-radius:6px}.row{display:flex;align-items:center;justify-content:space-between;gap:8px}.hidden{display:none!important}
+@media(max-width:1050px){.main-grid{grid-template-columns:1fr}.charts{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.kpis{grid-template-columns:repeat(2,1fr)}.charts{grid-template-columns:1fr}.chartbox{height:310px}.weather-grid{grid-template-columns:repeat(2,1fr)}.topbar{align-items:flex-start}.top-actions{max-width:140px}.brand h1{font-size:15px}}
+@media(max-width:420px){.form-grid{grid-template-columns:1fr}.full{grid-column:auto}.weather-stats{grid-template-columns:1fr 1fr}.kpis{gap:8px}.value{font-size:20px}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="logo">NG</div><div><h1>MCX Natural Gas Intelligence</h1><p>US fundamentals · Henry Hub · MCX execution confirmation</p></div></div>
+  <div class="top-actions"><button class="btn small" id="notifyBtn">Enable alerts</button><button class="btn small" id="exportBtn">Export snapshot</button><button class="btn small" id="resetBtn">Reset inputs</button></div>
+</header>
+<main class="wrap">
+  <div class="notice"><strong>Market-data note:</strong> The Henry Hub tracker below is connected to TradingView's free NYMEX/CME market-data display. TradingView lists CME/NYMEX data as free with at least a 10-minute delay; it is not an exchange real-time feed. The embedded quote is for monitoring only and is not read automatically by the signal engine. Enter the quoted Henry Hub % change and MCX prices in the trigger panel, or use a broker-authorised real-time feed for execution. Weather data loads automatically.</div>
+
+  <section class="card section" style="margin-bottom:14px">
+    <div class="section-head"><h2>US Natural Gas · Henry Hub price tracker</h2><span class="pill amber">Free exchange data · delayed ≥10 min</span></div>
+    <div id="tvTicker" class="tradingview-widget-container" style="min-height:70px;width:100%"><div class="tradingview-widget-container__widget"></div></div>
+    <div class="row" style="margin-top:7px;flex-wrap:wrap"><span class="muted" style="font-size:10px">Primary symbol: NYMEX:NG1! · Continuous front-month futures</span><a href="https://www.cmegroup.com/market-data/browse-data/delayed-quotes.html" target="_blank" rel="noopener" style="font-size:10px;color:#8fbaff">CME official delayed quotes ↗</a></div>
+  </section>
+
+  <div class="grid kpis">
+    <div class="card kpi"><div class="eyebrow">Fundamental score</div><div class="value" id="fundKpi">0 / 7</div><div class="sub" id="fundCaption">Waiting for inputs</div></div>
+    <div class="card kpi"><div class="eyebrow">Market momentum</div><div class="value" id="momKpi">0 / 7</div><div class="sub" id="momCaption">Waiting for price data</div></div>
+    <div class="card kpi"><div class="eyebrow">Weather outlook</div><div class="value" id="weatherKpi">Loading…</div><div class="sub" id="weatherCaption">6-city US demand proxy</div></div>
+    <div class="card kpi"><div class="eyebrow">Last input update</div><div class="value" id="updatedKpi" style="font-size:17px">Not set</div><div class="sub" id="updatedCaption">Refresh after updating prices</div></div>
+  </div>
+
+  <div class="grid main-grid">
+    <div>
+      <section class="card section">
+        <div class="section-head"><h2>01 · Live market charts</h2><span class="tag">TradingView widgets</span></div>
+        <div class="grid charts">
+          <div><div class="row" style="margin-bottom:7px"><b style="font-size:12px">Henry Hub Natural Gas</b><span class="muted" style="font-size:10px">NYMEX:NG1!</span></div><div class="chartbox"><div id="tvHenry" class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div></div></div></div>
+          <div><div class="row" style="margin-bottom:7px"><b style="font-size:12px">MCX Natural Gas</b><span class="muted" style="font-size:10px">MCX:NATURALGAS1!</span></div><div class="chartbox"><div id="tvMcx" class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div></div></div></div>
+        </div>
+        <div class="section-note">Chart panels are for visual confirmation. If a symbol does not render, open it directly in TradingView and check your market-data permissions.</div>
+      </section>
+
+      <section class="card section" style="margin-top:14px">
+        <div class="section-head"><h2>02 · US weather demand monitor</h2><button class="btn small" id="weatherRefresh">Refresh weather</button></div>
+        <div class="row" style="margin-bottom:9px"><span class="muted" style="font-size:11px">Average forecast temperature across selected US cities</span><span id="weatherUpdated" class="tag">Not loaded</span></div>
+        <div class="grid weather-grid" id="cityGrid">
+          <div class="city"><b>Chicago</b><div class="temp">--°F</div><small>Loading forecast…</small></div>
+          <div class="city"><b>New York</b><div class="temp">--°F</div><small>Loading forecast…</small></div>
+          <div class="city"><b>Boston</b><div class="temp">--°F</div><small>Loading forecast…</small></div>
+          <div class="city"><b>Minneapolis</b><div class="temp">--°F</div><small>Loading forecast…</small></div>
+          <div class="city"><b>Atlanta</b><div class="temp">--°F</div><small>Loading forecast…</small></div>
+          <div class="city"><b>Dallas</b><div class="temp">--°F</div><small>Loading forecast…</small></div>
+        </div>
+        <div class="weather-stats">
+          <div class="weather-stat"><strong id="hdd7">--</strong><span>7-day composite HDD*</span></div>
+          <div class="weather-stat"><strong id="cdd7">--</strong><span>7-day composite CDD*</span></div>
+          <div class="weather-stat"><strong id="avgTemp">--°F</strong><span>7-day mean temperature</span></div>
+        </div>
+        <div class="section-note">*Illustrative 6-city composite, not an official US population-weighted HDD/CDD forecast. HDD = max(65°F − daily mean temp, 0); CDD = max(daily mean temp − 65°F, 0). Compare successive model runs and specialist demand-weighted forecasts before assigning a directional weather score.</div>
+      </section>
+
+      <section class="card section" style="margin-top:14px">
+        <div class="section-head"><h2>03 · US fundamentals</h2><span class="tag">Update from your preferred data source</span></div>
+        <div class="form-grid">
+          <div class="field"><label for="weatherBias">Weather model revision</label><select id="weatherBias"><option value="0">No clear revision / unknown</option><option value="2">Colder / higher HDD than prior run</option><option value="-2">Warmer / lower HDD than prior run</option></select><span class="hint">Choose only after comparing forecast runs.</span></div>
+          <div class="field"><label for="production">US dry gas production</label><select id="production"><option value="0">Stable / unknown</option><option value="1">Falling production</option><option value="-1">Rising production</option></select></div>
+          <div class="field"><label for="lng">LNG feedgas / exports</label><select id="lng"><option value="0">Stable / unknown</option><option value="1">Rising feedgas</option><option value="-1">Falling feedgas / outage</option></select></div>
+          <div class="field"><label for="storageActual">EIA storage change · Actual (Bcf)</label><input id="storageActual" type="number" step="0.1" placeholder="e.g. +15 injection, -25 withdrawal"><span class="hint">Injection = positive; withdrawal = negative.</span></div>
+          <div class="field"><label for="storageConsensus">EIA storage change · Consensus (Bcf)</label><input id="storageConsensus" type="number" step="0.1" placeholder="Enter market expectation"><span class="hint">Use a credible consensus estimate, not a guess.</span></div>
+          <div class="field"><label for="storageSurplus">Storage vs 5-year average (Bcf)</label><input id="storageSurplus" type="number" step="1" placeholder="e.g. +80 above average"><span class="hint">Positive = above average; negative = below.</span></div>
+        </div>
+        <div class="divider"></div>
+        <div class="row"><b style="font-size:12px">Storage surprise interpretation</b><span class="pill" id="storagePill">No report data</span></div>
+        <p id="storageExplain" class="section-note">Enter actual and consensus storage changes when the EIA report is released. A smaller injection or larger withdrawal than expected is generally bullish, all else equal. The dashboard uses a simple ±10 Bcf surprise threshold as a heuristic, not a market rule.</p>
+      </section>
+    </div>
+
+    <div>
+      <section class="card section">
+        <div class="section-head"><h2>04 · Live-session inputs</h2><span class="tag">Manual / broker feed</span></div>
+        <div class="form-grid">
+          <div class="field"><label for="hhPrice">Henry Hub front-month price (USD/MMBtu)</label><input id="hhPrice" type="number" step="0.001" placeholder="Enter live price"></div>
+          <div class="field"><label for="hhChange">Henry Hub change (%)</label><input id="hhChange" type="number" step="0.01" placeholder="e.g. 1.25 or -0.80"></div>
+          <div class="field"><label for="mcxPrice">MCX Natural Gas price (₹/MMBtu)</label><input id="mcxPrice" type="number" step="0.1" placeholder="Enter active contract price"></div>
+          <div class="field"><label for="mcxVwap">MCX VWAP (₹)</label><input id="mcxVwap" type="number" step="0.1" placeholder="Enter session VWAP"></div>
+          <div class="field"><label for="resistance">MCX breakout level / resistance (₹)</label><input id="resistance" type="number" step="0.1" placeholder="Enter resistance"></div>
+          <div class="field"><label for="support">MCX breakdown level / support (₹)</label><input id="support" type="number" step="0.1" placeholder="Enter support"></div>
+          <div class="field"><label for="usdChange">USD/INR change (%)</label><input id="usdChange" type="number" step="0.01" placeholder="e.g. 0.10 or -0.15"></div>
+          <div class="field"><label for="oiState">MCX price + OI interpretation</label><select id="oiState"><option value="0">Neutral / not checked</option><option value="1">Long buildup (price ↑, OI ↑)</option><option value="0.5">Short covering (price ↑, OI ↓)</option><option value="-1">Short buildup (price ↓, OI ↑)</option><option value="-0.5">Long unwinding (price ↓, OI ↓)</option></select></div>
+          <div class="field full"><label for="quoteSource">Quote source / active MCX expiry</label><input id="quoteSource" type="text" placeholder="e.g. Broker terminal · Dec 2026 contract"></div>
+        </div>
+        <div class="checkrow">
+          <label class="check"><input type="checkbox" id="longClose"> 15m close above resistance</label>
+          <label class="check"><input type="checkbox" id="shortClose"> 15m close below support</label>
+          <label class="check"><input type="checkbox" id="volumeConfirm"> Volume above 20-bar average</label>
+          <label class="check"><input type="checkbox" id="retestConfirm"> Breakout retest held / breakdown retest rejected</label>
+        </div>
+        <div class="row" style="margin-top:12px"><span class="muted" style="font-size:10px">Update timestamp after refreshing broker quotes.</span><button class="btn primary" id="updateBtn">Update scores & triggers</button></div>
+      </section>
+
+      <section class="card section" style="margin-top:14px">
+        <div class="section-head"><h2>05 · Signal engine</h2><span class="tag">Rules-based, not predictive</span></div>
+        <div class="score-row">
+          <div class="score"><div class="eyebrow">Fundamental</div><div class="n" id="fundScore">0</div><div class="sub" id="fundDetail">Weather · production · LNG · storage</div></div>
+          <div class="score"><div class="eyebrow">Momentum</div><div class="n" id="momScore">0</div><div class="sub" id="momDetail">Henry Hub · VWAP · OI · breakout</div></div>
+        </div>
+        <div class="signal" id="signalBox"><div class="row"><span class="pill amber" id="signalPill">WAIT</span><span class="muted" id="signalConfidence" style="font-size:10px">Not enough data</span></div><div class="state" id="signalTitle" style="margin-top:7px">WAIT FOR CONFIRMATION</div><p id="signalText">Enter current market readings and fundamental updates. A directional bias alone will not create an entry trigger.</p></div>
+        <div class="divider"></div>
+        <b style="font-size:12px">Trigger checklist</b>
+        <table class="table" style="margin-top:7px"><thead><tr><th>Condition</th><th style="text-align:right">Status</th></tr></thead><tbody id="checklistBody"></tbody></table>
+        <div class="section-note">Long/short setup requires: aligned fundamental score, Henry Hub momentum, MCX price beyond the level, 15-minute close, above-average volume, and a successful retest. This deliberately favours confirmation over early entries.</div>
+      </section>
+
+      <section class="card section" style="margin-top:14px">
+        <div class="section-head"><h2>06 · Position sizing</h2><span class="tag">Risk first</span></div>
+        <div class="form-grid">
+          <div class="field"><label for="entryPrice">Planned entry price (₹)</label><input id="entryPrice" type="number" step="0.1" placeholder="Entry price"></div>
+          <div class="field"><label for="stopPrice">Stop-loss price (₹)</label><input id="stopPrice" type="number" step="0.1" placeholder="Stop price"></div>
+          <div class="field"><label for="maxRisk">Maximum acceptable loss (₹)</label><input id="maxRisk" type="number" step="100" placeholder="Your rupee risk limit"></div>
+          <div class="field"><label for="lotSize">Contract quantity (MMBtu)</label><input id="lotSize" type="number" step="1" value="1250"></div>
+        </div>
+        <div class="risk-result" id="riskResult">Enter entry, stop-loss and maximum acceptable loss to calculate position size.</div>
+        <div class="section-note">Verify the lot size and expiry-specific contract terms with MCX before trading. Calculation excludes brokerage, taxes, slippage, gaps and any margin changes.</div>
+      </section>
+    </div>
+  </div>
+
+  <section class="card section" style="margin-top:14px">
+    <div class="section-head"><h2>07 · Data sources & operating checklist</h2><span class="tag">Bookmark these</span></div>
+    <div class="links">
+      <a href="https://www.cmegroup.com/markets/energy/natural-gas/natural-gas.html" target="_blank" rel="noopener">CME Henry Hub</a>
+      <a href="https://www.eia.gov/naturalgas/storage/" target="_blank" rel="noopener">EIA storage</a>
+      <a href="https://ir.eia.gov/ngs/schedule.html" target="_blank" rel="noopener">EIA release schedule</a>
+      <a href="https://www.eia.gov/naturalgas/data.php" target="_blank" rel="noopener">EIA natural gas data</a>
+      <a href="https://www.cpc.ncep.noaa.gov/" target="_blank" rel="noopener">NOAA Climate Prediction Center</a>
+      <a href="https://forecastgas.com/" target="_blank" rel="noopener">Forecast Gas</a>
+      <a href="https://natgasweather.com/" target="_blank" rel="noopener">NatGasWeather</a>
+      <a href="https://www.mcxindia.com/" target="_blank" rel="noopener">MCX</a>
+      <a href="https://www.tradingview.com/symbols/NYMEX-NG1!/" target="_blank" rel="noopener">Henry Hub chart</a>
+      <a href="https://in.tradingview.com/symbols/MCX-NATURALGAS1!/" target="_blank" rel="noopener">MCX chart</a>
+    </div>
+    <div class="divider"></div>
+    <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:12px">
+      <div><b style="font-size:12px">Before the US session</b><p class="section-note">Check active contract month, Henry Hub overnight move, weather-model revisions, production, LNG feedgas, storage context and USD/INR.</p></div>
+      <div><b style="font-size:12px">During the session</b><p class="section-note">Watch Henry Hub 5m/15m, MCX VWAP, session high/low, volume and whether the MCX move confirms the US move.</p></div>
+      <div><b style="font-size:12px">Before entry</b><p class="section-note">Confirm the trigger candle and retest, define the stop first, calculate lots from rupee risk, and avoid chasing an extended candle.</p></div>
+    </div>
+  </section>
+  <div class="footer">Weather service: Open-Meteo forecast API, non-commercial use subject to its licence and attribution requirements. The weather composite is a simplified proxy and is not an official national demand forecast. Market data rights belong to the relevant exchanges and providers. Use only data you are licensed to access.</div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const inputIds=['weatherBias','production','lng','storageActual','storageConsensus','storageSurplus','hhPrice','hhChange','mcxPrice','mcxVwap','resistance','support','usdChange','oiState','quoteSource','longClose','shortClose','volumeConfirm','retestConfirm','entryPrice','stopPrice','maxRisk','lotSize'];
+const cities=[
+ {name:'Chicago',lat:41.8781,lon:-87.6298},{name:'New York',lat:40.7128,lon:-74.0060},
+ {name:'Boston',lat:42.3601,lon:-71.0589},{name:'Minneapolis',lat:44.9778,lon:-93.2650},
+ {name:'Atlanta',lat:33.7490,lon:-84.3880},{name:'Dallas',lat:32.7767,lon:-96.7970}
+];
+let weatherData=null,lastSignal='WAIT',lastUpdate=null;
+function val(id){const x=$(id).value;return x===''?null:Number(x)}
+function fmt(n,d=2){return Number(n).toLocaleString('en-IN',{maximumFractionDigits:d,minimumFractionDigits:d})}
+function signClass(n){return n>0?'up':n<0?'down':'neutral'}
+function save(){try{const o={};inputIds.forEach(id=>{o[id]=$(id).type==='checkbox'?$(id).checked:$(id).value});localStorage.setItem('mcxNgDashboard',JSON.stringify(o))}catch(e){}}
+function load(){try{const o=JSON.parse(localStorage.getItem('mcxNgDashboard')||'{}');inputIds.forEach(id=>{if(o[id]!==undefined){if($(id).type==='checkbox')$(id).checked=o[id];else $(id).value=o[id]}})}catch(e){}}
+function setTV(container,symbol){const host=$(container);host.innerHTML='<div class="tradingview-widget-container__widget"></div>';const s=document.createElement('script');s.src='https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';s.async=true;s.innerHTML=JSON.stringify({autosize:true,symbol,interval:'15',timezone:'Asia/Kolkata',theme:'dark',style:'1',locale:'en',allow_symbol_change:true,calendar:false,support_host:'https://www.tradingview.com'});host.appendChild(s)}
+function setTicker(){const host=$('tvTicker');host.innerHTML='<div class="tradingview-widget-container__widget"></div>';const s=document.createElement('script');s.src='https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js';s.async=true;s.innerHTML=JSON.stringify({symbols:[{proName:'NYMEX:NG1!',title:'Henry Hub Natural Gas'},{proName:'MCX:NATURALGAS1!',title:'MCX Natural Gas'},{proName:'FX_IDC:USDINR',title:'USD/INR'}],showSymbolLogo:true,isTransparent:true,displayMode:'adaptive',colorTheme:'dark',locale:'en'});host.appendChild(s)}
+function storageScore(){const a=val('storageActual'),c=val('storageConsensus'),sur=val('storageSurplus');let score=0,txt='No report data entered';if(a!==null&&c!==null){const diff=a-c;if(diff<=-10){score+=2;txt=`Actual ${fmt(a,1)} Bcf vs consensus ${fmt(c,1)} Bcf: ${fmt(Math.abs(diff),1)} Bcf tighter than expected (bullish).`}else if(diff>=10){score-=2;txt=`Actual ${fmt(a,1)} Bcf vs consensus ${fmt(c,1)} Bcf: ${fmt(diff,1)} Bcf looser than expected (bearish).`}else{txt=`Actual ${fmt(a,1)} Bcf vs consensus ${fmt(c,1)} Bcf: close to expectations.`}}if(sur!==null){if(sur<=-50)score+=1;else if(sur>=50)score-=1;txt+=(a!==null&&c!==null?' ':'')+`Storage is ${sur>=0?fmt(sur,0)+' Bcf above':fmt(Math.abs(sur),0)+' Bcf below'} the five-year average.`}return {score,txt,has:a!==null||c!==null||sur!==null}}
+function calc(){
+ const weather=Number($('weatherBias').value),prod=Number($('production').value),lng=Number($('lng').value),st=storageScore();
+ const fundamental=weather+prod+lng+st.score;
+ const hh=val('hhChange'),mp=val('mcxPrice'),vwap=val('mcxVwap'),res=val('resistance'),sup=val('support'),oi=Number($('oiState').value);
+ let hhScore=0;if(hh!==null){if(hh>=1.2)hhScore=2;else if(hh>=0.25)hhScore=1;else if(hh<=-1.2)hhScore=-2;else if(hh<=-0.25)hhScore=-1}
+ let vwapScore=0;if(mp!==null&&vwap!==null)vwapScore=mp>vwap?1:mp<vwap?-1:0;
+ const longBreak=mp!==null&&res!==null&&mp>res&&$('longClose').checked&&$('volumeConfirm').checked&&$('retestConfirm').checked;
+ const shortBreak=mp!==null&&sup!==null&&mp<sup&&$('shortClose').checked&&$('volumeConfirm').checked&&$('retestConfirm').checked;
+ const breakoutScore=longBreak?3:shortBreak?-3:0;
+ const momentum=hhScore+vwapScore+oi+breakoutScore;
+ let signal='WAIT',title='WAIT FOR CONFIRMATION',message='Enter current readings and wait for price confirmation. A fundamental bias alone is not an entry trigger.',kind='amber',confidence='Insufficient alignment';
+ const enough=hh!==null&&mp!==null&&vwap!==null;
+ if(enough&&fundamental>=2&&hhScore>=1&&momentum>=5&&longBreak&&vwapScore===1){signal='BUY';title='LONG TRIGGER CONFIRMED';message='Bullish fundamentals, positive Henry Hub momentum and MCX breakout/retest confirmation are aligned. Use the planned stop and position-size calculation; do not chase if price has extended.';kind='green';confidence='High rule alignment';}
+ else if(enough&&fundamental<=-2&&hhScore<=-1&&momentum<=-5&&shortBreak&&vwapScore===-1){signal='SELL';title='SHORT TRIGGER CONFIRMED';message='Bearish fundamentals, negative Henry Hub momentum and MCX breakdown/retest confirmation are aligned. Use the planned stop and position-size calculation; do not chase if price has extended.';kind='red';confidence='High rule alignment';}
+ else if(enough&&fundamental>=2&&hhScore>=1){signal='WATCH LONG';title='BULLISH BIAS · WAIT FOR MCX TRIGGER';message='US fundamentals and Henry Hub momentum lean bullish, but the full MCX breakout, 15-minute close, volume and retest conditions are not all satisfied.';kind='green';confidence='Directional bias only';}
+ else if(enough&&fundamental<=-2&&hhScore<=-1){signal='WATCH SHORT';title='BEARISH BIAS · WAIT FOR MCX TRIGGER';message='US fundamentals and Henry Hub momentum lean bearish, but the full MCX breakdown, 15-minute close, volume and retest conditions are not all satisfied.';kind='red';confidence='Directional bias only';}
+ else if(enough&&fundamental>=2&&hhScore<1){signal='CONFLICT';title='FUNDAMENTALS ≠ PRICE';message='Fundamentals lean bullish but Henry Hub is not confirming. Stand aside until the underlying market confirms.';kind='amber';confidence='Conflicting evidence';}
+ else if(enough&&fundamental<=-2&&hhScore>-1){signal='CONFLICT';title='FUNDAMENTALS ≠ PRICE';message='Fundamentals lean bearish but Henry Hub is not confirming. Stand aside until the underlying market confirms.';kind='amber';confidence='Conflicting evidence';}
+ $('fundKpi').textContent=(fundamental>0?'+':'')+fundamental;$('fundKpi').className='value '+signClass(fundamental);$('fundCaption').textContent=fundamental>=2?'Bullish fundamental tilt':fundamental<=-2?'Bearish fundamental tilt':'Neutral / mixed fundamentals';
+ $('momKpi').textContent=(momentum>0?'+':'')+momentum;$('momKpi').className='value '+signClass(momentum);$('momCaption').textContent=hh===null?'Enter Henry Hub % change':`Henry Hub ${hh>0?'+':''}${fmt(hh)}% · MCX vs VWAP ${vwapScore>0?'above':vwapScore<0?'below':'neutral'}`;
+ $('fundScore').textContent=(fundamental>0?'+':'')+fundamental;$('fundScore').className='n '+signClass(fundamental);$('momScore').textContent=(momentum>0?'+':'')+momentum;$('momScore').className='n '+signClass(momentum);
+ $('storageExplain').textContent=st.txt;$('storagePill').textContent=!st.has?'No report data':st.score>0?'Tighter · bullish':st.score<0?'Looser · bearish':'Near expectations';$('storagePill').className='pill '+(!st.has?'':st.score>0?'green':st.score<0?'red':'amber');
+ $('signalPill').textContent=signal;$('signalPill').className='pill '+kind;$('signalTitle').textContent=title;$('signalText').textContent=message;$('signalConfidence').textContent=confidence;$('signalBox').style.borderColor=kind==='green'?'#247c67':kind==='red'?'#8a3348':'#6a5427';
+ const bull=['BUY','WATCH LONG'].includes(signal),bear=['SELL','WATCH SHORT'].includes(signal);
+ const checks=[['Fundamentals support direction',bull?fundamental>=2:bear?fundamental<=-2:false],['Henry Hub confirms direction',bull?hhScore>=1:bear?hhScore<=-1:false],['MCX price is beyond trigger level',bull?longBreak:bear?shortBreak:false],['15-minute candle close confirmed',bull?$('longClose').checked:bear?$('shortClose').checked:false],['Volume above 20-bar average',(bull||bear)&&$('volumeConfirm').checked],['Breakout/breakdown retest confirmed',(bull||bear)&&$('retestConfirm').checked],['MCX price on correct side of VWAP',bull?vwapScore===1:bear?vwapScore===-1:false]];
+ $('checklistBody').innerHTML=checks.map(([t,ok])=>`<tr><td>${t}</td><td style="text-align:right"><span class="pill ${ok?'green':'amber'}">${ok?'Met':'Pending'}</span></td></tr>`).join('');
+ const e=val('entryPrice'),s=val('stopPrice'),risk=val('maxRisk'),lot=val('lotSize');if(e!==null&&s!==null&&risk!==null&&lot!==null&&lot>0&&risk>0&&e!==s){const dist=Math.abs(e-s),perLot=dist*lot,lots=Math.floor(risk/perLot),maxLoss=lots*perLot;$('riskResult').innerHTML=`Risk per unit move: <b>₹${fmt(dist)}</b> · Risk per lot: <b>₹${fmt(perLot,0)}</b><br>Position size within risk limit: <b>${lots} lot${lots===1?'':'s'}</b> · Estimated planned loss: <b>₹${fmt(maxLoss,0)}</b>${lots===0?'<br><span class="down">One lot exceeds your stated risk limit.</span>':''}`;}else{$('riskResult').textContent='Enter entry, stop-loss and maximum acceptable loss to calculate position size.'}
+ if(signal!==lastSignal&&signal!=='WAIT'&&signal!=='CONFLICT'&&Notification.permission==='granted'){new Notification('MCX Natural Gas: '+signal,{body:title+' · Confirm manually before acting.'});}lastSignal=signal;save();
+}
+async function loadWeather(){
+ $('weatherRefresh').disabled=true;$('weatherRefresh').textContent='Loading…';
+ try{
+  const results=await Promise.all(cities.map(async c=>{const url=`https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}&daily=temperature_2m_mean&temperature_unit=fahrenheit&timezone=America%2FChicago&forecast_days=7`;const r=await fetch(url);if(!r.ok)throw new Error('Weather service returned '+r.status);return {city:c.name,data:await r.json()}}));
+  const dailyTemps=Array.from({length:7},(_,i)=>results.map(x=>x.data.daily.temperature_2m_mean[i]).filter(Number.isFinite));
+  const avg=dailyTemps.map(a=>a.reduce((x,y)=>x+y,0)/Math.max(a.length,1));const hdd=avg.reduce((s,t)=>s+Math.max(65-t,0),0),cdd=avg.reduce((s,t)=>s+Math.max(t-65,0),0),mean=avg.reduce((a,b)=>a+b,0)/7;
+  $('hdd7').textContent=fmt(hdd,1);$('cdd7').textContent=fmt(cdd,1);$('avgTemp').textContent=fmt(mean,1)+'°F';
+  $('weatherKpi').textContent=hdd>cdd?'HDD-led':cdd>hdd?'CDD-led':'Balanced';$('weatherKpi').className='value '+(hdd>cdd?'up':cdd>hdd?'down':'neutral');$('weatherCaption').textContent=`Composite forecast · ${hdd.toFixed(0)} HDD / ${cdd.toFixed(0)} CDD`;
+  $('cityGrid').innerHTML=results.map(x=>{const t=x.data.daily.temperature_2m_mean[0];const next=x.data.daily.temperature_2m_mean.slice(0,7).reduce((a,b)=>a+b,0)/7;return `<div class="city"><b>${x.city}</b><div class="temp">${fmt(t,0)}°F</div><small>7-day mean ${fmt(next,0)}°F</small></div>`}).join('');
+  weatherData={fetchedAt:new Date().toISOString(),hdd7:hdd,cdd7:cdd,meanTemp:mean,cities:results.map(x=>({city:x.city,day1:x.data.daily.temperature_2m_mean[0]}))};$('weatherUpdated').textContent='Updated '+new Date().toLocaleTimeString();
+ }catch(e){$('weatherKpi').textContent='Unavailable';$('weatherCaption').textContent='Weather API could not be reached';$('weatherUpdated').textContent='Load failed';console.warn(e)}
+ finally{$('weatherRefresh').disabled=false;$('weatherRefresh').textContent='Refresh weather'}
+}
+function markUpdate(){lastUpdate=new Date();$('updatedKpi').textContent=lastUpdate.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});$('updatedCaption').textContent='Quotes refreshed manually';calc()}
+inputIds.forEach(id=>$(id).addEventListener('change',()=>{if(id!=='longClose'&&id!=='shortClose'&&id!=='volumeConfirm'&&id!=='retestConfirm')save();calc()}));
+$('updateBtn').addEventListener('click',markUpdate);$('weatherRefresh').addEventListener('click',loadWeather);
+$('notifyBtn').addEventListener('click',async()=>{if(!('Notification'in window)){alert('Browser notifications are not supported.');return}const p=await Notification.requestPermission();$('notifyBtn').textContent=p==='granted'?'Alerts enabled':'Alerts unavailable'});
+$('exportBtn').addEventListener('click',()=>{const snap={exportedAt:new Date().toISOString(),inputs:Object.fromEntries(inputIds.map(id=>[id,$(id).type==='checkbox'?$(id).checked:$(id).value])),scores:{fundamental:$('fundScore').textContent,momentum:$('momScore').textContent,signal:$('signalPill').textContent,title:$('signalTitle').textContent},weather:weatherData};const blob=new Blob([JSON.stringify(snap,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='mcx-natural-gas-snapshot-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(a.href)});
+$('resetBtn').addEventListener('click',()=>{if(!confirm('Reset all market inputs and saved values?'))return;localStorage.removeItem('mcxNgDashboard');inputIds.forEach(id=>{if($(id).type==='checkbox')$(id).checked=false;else if(id==='lotSize')$(id).value='1250';else $(id).value=''});lastSignal='WAIT';$('updatedKpi').textContent='Not set';calc()});
+load();setTicker();setTV('tvHenry','NYMEX:NG1!');setTV('tvMcx','MCX:NATURALGAS1!');calc();loadWeather();setInterval(loadWeather,30*60*1000);
+</script>
+</body>
+</html>

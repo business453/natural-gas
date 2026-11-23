@@ -1,0 +1,12 @@
+FIRST RUN
+1) Install Python 3.10+
+2) Run run_dashboard.bat
+3) Fill your own ANGEL_API_KEY, ANGEL_CLIENT_CODE, ANGEL_PIN and ANGEL_TOTP_SECRET in the .env file that opens.
+4) Save .env and run run_dashboard.bat again.
+5) Select your active MCX Natural Gas expiry and click Connect Angel One.
+
+Keep .env private. Never send it to anyone. This dashboard only reads market data; it cannot place orders.
+
+
+CONTRACT LIST TROUBLESHOOTING (v3.2)
+If the contract dropdown shows HTTP 502/504, restart the dashboard with this v3.2 build. It tries Angel One's current instrument-master host and the older host, then falls back to a local cached master when available. A cached list is clearly marked with its age; verify the expiry and symbol in Angel One before subscribing. Never guess a token.
