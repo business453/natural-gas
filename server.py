@@ -38,10 +38,12 @@ STATE: dict[str, Any] = {
         "last_error": None,
     },
     "henry_hub": {"status": "not_loaded", "quote": None, "last_error": None},
+    "usd_inr": {"status": "not_loaded", "quote": None, "last_error": None},
 }
 ANGEL_SESSION: dict[str, Any] = {"smart": None, "ws": None, "thread": None}
 CONTRACTS_CACHE: dict[str, Any] = {"loaded_at": 0.0, "contracts": []}
 HH_CACHE: dict[str, Any] = {"loaded_at": 0.0, "quote": None}
+USDINR_CACHE: dict[str, Any] = {"loaded_at": 0.0, "quote": None}
 # Intraday history is intentionally held in memory for the currently selected
 # Angel One contract. It is cleared when a different contract is connected.
 OI_HISTORY: list[dict[str, Any]] = []
@@ -59,6 +61,10 @@ MASTER_CACHE_META: dict[str, Any] = {"source": None, "cached_at": None, "stale":
 YAHOO_CHART_URLS = [
     "https://query1.finance.yahoo.com/v8/finance/chart/NG%3DF",
     "https://query2.finance.yahoo.com/v8/finance/chart/NG%3DF",
+]
+YAHOO_USDINR_URLS = [
+    "https://query1.finance.yahoo.com/v8/finance/chart/INR%3DX",
+    "https://query2.finance.yahoo.com/v8/finance/chart/INR%3DX",
 ]
 
 
@@ -297,6 +303,83 @@ def fetch_henry_hub_quote(force: bool = False) -> dict[str, Any]:
     raise RuntimeError(message)
 
 
+def fetch_usdinr_quote(force: bool = False) -> dict[str, Any]:
+    """Fetch Yahoo Finance INR=X USD/INR delayed reference data, not an execution feed."""
+    now = time.time()
+    if USDINR_CACHE["quote"] and not force and now - USDINR_CACHE["loaded_at"] < 45:
+        return USDINR_CACHE["quote"]
+
+    errors: list[str] = []
+    for url in YAHOO_USDINR_URLS:
+        try:
+            resp = requests.get(
+                url,
+                params={"range": "1d", "interval": "5m", "includePrePost": "true"},
+                headers={"User-Agent": "Mozilla/5.0 MCX-NG-Dashboard/1.0"},
+                timeout=10,
+            )
+            resp.raise_for_status()
+            payload = resp.json()
+            result = payload.get("chart", {}).get("result")
+            if not result:
+                raise RuntimeError(payload.get("chart", {}).get("error", {}).get("description", "No USD/INR quote returned"))
+            result = result[0]
+            meta = result.get("meta", {})
+            timestamps = result.get("timestamp") or []
+            closes = result.get("indicators", {}).get("quote", [{}])[0].get("close") or []
+            last_pair = next(((ts, px) for ts, px in zip(reversed(timestamps), reversed(closes)) if px is not None), None)
+            price = meta.get("regularMarketPrice")
+            quote_ts = meta.get("regularMarketTime")
+            if last_pair:
+                ts_last, close_last = last_pair
+                if price is None:
+                    price = close_last
+                if not quote_ts:
+                    quote_ts = ts_last
+            previous = meta.get("chartPreviousClose") or meta.get("previousClose")
+            if price is None or previous in (None, 0):
+                raise RuntimeError("USD/INR response did not include a usable price and previous close")
+            price = float(price)
+            previous = float(previous)
+            quote_ts = int(quote_ts or now)
+            age_seconds = max(0, int(now - quote_ts))
+            history = [
+                {"timestamp_ms": int(ts) * 1000, "price": float(px)}
+                for ts, px in zip(timestamps, closes) if px is not None
+            ]
+            quote = {
+                "symbol": "INR=X",
+                "name": "USD/INR exchange rate",
+                "price": price,
+                "previous_close": previous,
+                "change": price - previous,
+                "change_pct": ((price - previous) / previous) * 100.0,
+                "timestamp": datetime.fromtimestamp(quote_ts, tz=timezone.utc).isoformat(),
+                "age_seconds": age_seconds,
+                "stale": age_seconds > 2 * 60 * 60,
+                "history": history[-150:],
+                "source": "Yahoo Finance public USD/INR delayed reference quote",
+                "delay_note": "Delayed FX reference data; update cadence and timestamp vary. This is not an executable USD/INR futures quote.",
+            }
+            USDINR_CACHE.update({"loaded_at": now, "quote": quote})
+            with STATE_LOCK:
+                STATE["usd_inr"] = {"status": "ok", "quote": quote, "last_error": None}
+            return quote
+        except Exception as exc:
+            errors.append(str(exc))
+
+    message = " | ".join(errors[-2:]) or "USD/INR quote unavailable"
+    cached = USDINR_CACHE.get("quote")
+    with STATE_LOCK:
+        STATE["usd_inr"] = {"status": "error", "quote": cached, "last_error": message}
+    if cached:
+        cached = dict(cached)
+        cached["stale"] = True
+        cached["last_error"] = message
+        return cached
+    raise RuntimeError(message)
+
+
 class ConnectRequest(BaseModel):
     token: str
 
@@ -511,11 +594,20 @@ def henry_hub():
         raise HTTPException(status_code=502, detail=f"Henry Hub public delayed quote unavailable: {exc}")
 
 
+@app.get("/api/usd-inr")
+def usd_inr():
+    try:
+        return fetch_usdinr_quote(force=True)
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail=f"USD/INR delayed reference quote unavailable: {exc}")
+
+
 @app.get("/api/status")
 def status():
     with STATE_LOCK:
         angel = dict(STATE["angel"])
         hh = dict(STATE["henry_hub"])
+        fx = dict(STATE["usd_inr"])
         # Downsample the in-memory tick history for the two-second dashboard poll.
         history = list(OI_HISTORY)
         stride = max(1, (len(history) + 899) // 900)
@@ -523,7 +615,7 @@ def status():
         if history and (not oi_history or oi_history[-1] is not history[-1]):
             oi_history = [*oi_history, history[-1]]
     # Strip any non-serialisable values defensively.
-    return {"angel": angel, "henry_hub": hh, "oi_history": oi_history}
+    return {"angel": angel, "henry_hub": hh, "usd_inr": fx, "oi_history": oi_history}
 
 
 if __name__ == "__main__":

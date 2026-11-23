@@ -1,6 +1,6 @@
 MCX NATURAL GAS INTELLIGENCE DASHBOARD
-Angel One SmartAPI + resilient contract-master loader + free delayed Henry Hub reference quote
-Build: v3.4
+Angel One SmartAPI + Henry Hub + USD/INR delayed references + draggable dashboard
+Build: v3.5
 
 WHAT THIS VERSION CONNECTS
 1. MCX Natural Gas: Angel One SmartAPI WebSocket v2 (your authenticated account feed).
@@ -15,8 +15,12 @@ WHAT THIS VERSION CONNECTS
    - This is a delayed NYMEX reference quote, not a guaranteed real-time exchange feed.
    - A stale Henry Hub quote is excluded from the automatic signal calculation.
 3. US weather: Open-Meteo forecast for six selected US cities, refreshed every 30 minutes.
-4. Rule-based fundamental/momentum dashboard, breakout checklist, risk sizing and JSON snapshot export.
-5. New Open Interest Tracker: plots Angel One MCX price and OI history with a dual-axis chart; automatically classifies long buildup, short covering, short buildup or long unwinding over a selectable lookback (5m, 15m, 30m, 60m or 4h). The widget is collapsible and remembers its open/closed state. When the OI selector is set to Automatic, its score feeds the momentum calculation; manual overrides remain available.
+4. USD/INR: Yahoo Finance INR=X delayed reference quote, refreshed every 60 seconds, with rate, percent change, quote age and intraday reference mini-chart.
+   - A rising USD/INR (weaker rupee) is marked as a possible MCX currency-translation tailwind; a falling USD/INR (stronger rupee) is marked as a possible headwind.
+   - Default signal band is ±0.10%; change the threshold in the UI. The FX signal contributes at most +1 / -1 to the momentum score. Stale or unavailable quotes are excluded.
+   - It is not the MCX USDINR futures price and is not a real-time executable FX feed. It must not be treated as a standalone trade signal.
+5. Rule-based fundamental/momentum dashboard, breakout checklist, risk sizing and JSON snapshot export.
+6. New Open Interest Tracker: plots Angel One MCX price and OI history with a dual-axis chart; automatically classifies long buildup, short covering, short buildup or long unwinding over a selectable lookback (5m, 15m, 30m, 60m or 4h). The widget is collapsible and remembers its open/closed state. When the OI selector is set to Automatic, its score feeds the momentum calculation; manual overrides remain available.
 
 IMPORTANT: This application is read-only. It does NOT place, modify or cancel orders.
 
@@ -47,7 +51,8 @@ DAILY USE
 
 DATA TIMING AND LIMITATIONS
 - Angel One MCX WebSocket: live account-authorised market feed subject to Angel One/SmartAPI availability, exchange trading hours, app permissions and data terms.
-- Yahoo Finance NG=F: delayed quote. Its public endpoint is not a documented exchange feed, may change, throttle or stop working, and must not be used as an execution-grade real-time source. A page refreshing every minute does not remove the underlying delay.
+- Yahoo Finance NG=F: delayed quote.
+- Yahoo Finance INR=X: delayed USD/INR spot/reference quote. It is a secondary currency context indicator only; it is not an exchange-authorised live USDINR futures feed. The 2-hour age check is a stale-data guard, not a guarantee of timeliness. Its public endpoint is not a documented exchange feed, may change, throttle or stop working, and must not be used as an execution-grade real-time source. A page refreshing every minute does not remove the underlying delay.
 - CME's public delayed futures quotes are delayed by at least 10 minutes. CME says its website market data is for reference and should not validate or replace its licensed real-time feed.
 - For genuine real-time Henry Hub prices, obtain a CME/NYMEX-authorised real-time market-data entitlement from CME or an authorised vendor. There is no reliable, exchange-authorised, unlimited free real-time futures feed assumed in this package.
 - Angel One's average_traded_price field is used as an indicative VWAP proxy only; it may not match a platform's exact intraday VWAP calculation. Verify on your chart before using it.
@@ -64,7 +69,7 @@ TROUBLESHOOTING
 - "No upcoming MCX Natural Gas futures": retry after the Angel One instrument master updates; check Angel One SmartAPI availability.
 - Contract-list HTTP 502/504: this is usually the Angel One instrument-master download service, not your login credentials. v3.2 tries the current angelone.in hostname, then the legacy hostname, retries transient failures and uses a local cached copy if one exists. If it reports cached data, verify the exact contract symbol and expiry in Angel One before connecting. If no cache exists and both hosts fail, retry later or contact SmartAPI support; do not use a guessed token.
 - MCX says "subscribing" but no tick arrives: verify the selected expiry is active, market is open and the account has MCX market-data access. Check the terminal window for SDK errors.
-- Henry Hub unavailable: Yahoo's public endpoint may be throttled or changed. Open https://finance.yahoo.com/quote/NG%3DF/ to inspect the delayed quote, or use CME delayed quotes. The signal engine will not use a stale quote.
+- Henry Hub or USD/INR unavailable: Yahoo's public endpoint may be throttled or changed. For USD/INR, inspect https://finance.yahoo.com/quote/INR%3DX/; stale/unavailable data does not contribute to the momentum score. Open https://finance.yahoo.com/quote/NG%3DF/ to inspect the delayed quote, or use CME delayed quotes. The signal engine will not use a stale quote.
 - Windows launcher errors: verify Python 3.10+, then run run_dashboard.bat again. Keep the terminal window open.
 
 REFERENCES
@@ -75,6 +80,7 @@ Angel One market data API: https://smartapi.angelone.in/docs/MarketData
 Angel One instrument master (current documented host): https://margincalculator.angelone.in/OpenAPI_File/files/OpenAPIScripMaster.json
 Legacy Angel One instrument master fallback: https://margincalculator.angelbroking.com/OpenAPI_File/files/OpenAPIScripMaster.json
 Yahoo Finance NG=F (delayed quote): https://finance.yahoo.com/quote/NG%3DF/
+Yahoo Finance INR=X USD/INR (delayed quote): https://finance.yahoo.com/quote/INR%3DX/
 CME delayed quotes: https://www.cmegroup.com/market-data/browse-data/delayed-quotes.html
 CME market-data delay and use notice: https://www.cmegroup.com/trading/about-quotes.html
 EIA storage: https://www.eia.gov/naturalgas/storage/
@@ -95,3 +101,20 @@ VERSION 3.4 ADDITIONS
 - Added in-memory tick history to /api/status, sampled at up to one point per second and downsampled for the browser poll. History resets on contract switch and server restart.
 - The OI selector defaults to Automatic and can be manually overridden. The widget open/closed state is remembered in the browser.
 - No API credentials are included. This application remains read-only and does not place orders.
+
+VERSION 3.5 ADDITIONS
+- Added Yahoo Finance INR=X USD/INR delayed reference endpoint (/api/usd-inr), with timestamp, quote age, change percentage and intraday mini-chart history.
+- Added USD/INR tailwind / headwind / neutral signal. The default ±0.10% threshold is configurable; a fresh signal contributes a limited +1 / -1 momentum modifier. It does not independently generate BUY/SELL. Stale quotes are excluded.
+- Added browser notification when the FX signal changes into a tailwind/headwind state after the initial quote, subject to browser notification permission.
+- Flattened the dashboard into a responsive two-column widget layout. All 15 top-level widgets have collapse controls and draggable dotted handles. Order and collapse state persist in local storage; Reset layout restores the default arrangement.
+- Added reset-layout control and included the current USD/INR reading in exported JSON snapshots.
+- All 15 dashboard widgets, including the four KPI cards, are collapsible and draggable using the dotted handle. Widget order and open/closed state are saved in browser local storage. Use Reset layout to restore the default layout.
+
+NEXT RECOMMENDED ALERTS / INDICATORS (NOT YET IMPLEMENTED)
+1. FX-adjusted MCX fair-value divergence: compare the same maturity of Henry Hub and MCX, adjust for USD/INR, then alert when MCX deviates materially from the implied move. Contract-month alignment is essential before calculating this.
+2. Henry Hub calendar spread / term structure: front-month versus next-month price, spread widening/narrowing, and contract-roll proximity. This helps avoid interpreting a front-month move as a signal for a different MCX expiry.
+3. Weather model revision alert: compare successive ECMWF/GFS runs and population-weighted HDD/CDD changes, rather than relying only on the dashboard's six-city proxy. NOAA publishes official 6-10 and 8-14 day temperature outlooks.
+4. EIA storage event alert: countdown to the release, actual versus a named consensus source, five-year and year-ago deviations, plus regional breakdowns. EIA's weekly report includes regional stocks and historical comparisons.
+5. MCX volatility / participation alerts: ATR expansion, unusually high volume versus the 20-bar average, opening gap, VWAP reclaim/loss, and price/OI confirmation.
+6. Liquidity and expiry alerts: bid-ask spread widening, thin order book, low volume, expiry-day risk and rollover into the next MCX contract.
+7. Event-risk calendar: EIA release, NOAA model updates, US holidays, major LNG terminal outages and significant pipeline maintenance notices.
