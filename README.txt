@@ -118,3 +118,48 @@ NEXT RECOMMENDED ALERTS / INDICATORS (NOT YET IMPLEMENTED)
 5. MCX volatility / participation alerts: ATR expansion, unusually high volume versus the 20-bar average, opening gap, VWAP reclaim/loss, and price/OI confirmation.
 6. Liquidity and expiry alerts: bid-ask spread widening, thin order book, low volume, expiry-day risk and rollover into the next MCX contract.
 7. Event-risk calendar: EIA release, NOAA model updates, US holidays, major LNG terminal outages and significant pipeline maintenance notices.
+
+VERSION 3.6 - ADVANCED MARKET ALERTS
+-----------------------------------
+This release adds a compact, collapsible/draggable Advanced Market Alerts widget
+with ten monitors:
+1. Henry Hub + USD/INR expected-move proxy versus entered MCX percentage move.
+2. Henry Hub front/next-month calendar spread.
+3. Weather-model HDD/CDD revision comparison.
+4. EIA storage actual versus consensus (reuses existing EIA fields).
+5. LNG feedgas current versus prior reading.
+6. US dry-gas production current versus prior reading.
+7. MCX volume versus 20-bar average.
+8. ATR versus baseline ATR.
+9. Bid/ask displayed-depth imbalance.
+10. Days to selected contract expiry.
+
+The inputs and widget layout persist in this browser's local storage. Alerts are
+shown in the in-dashboard alert feed; browser notifications require the user to
+enable them. These monitors do not place orders.
+
+DATA AVAILABILITY / IMPORTANT LIMITATIONS
+------------------------------------------
+The current release does NOT claim to subscribe to paid/live feeds for the
+calendar spread, HDD/CDD revisions, LNG feedgas, dry-gas production, ATR or
+order-book depth. Those fields are manual reference inputs. EIA uses the
+existing manually-entered actual/consensus/surplus fields. MCX volume may be
+read from Angel One's stream, but the volume-spike comparison is manually
+entered against a 20-bar average. Use same-contract, same-timeframe readings.
+The cross-market comparison is an approximate diagnostic, not fair value. It
+can be distorted by futures expiry mismatch, basis, quote delays, USD/INR
+source mismatch, session timing and currency conversion conventions.
+Calendar spread convention shown is front-month price minus next-month price:
+positive = front-month premium (backwardation); negative = next-month premium
+(contango). Weather HDD and CDD values must be compared like-for-like and for
+the same forecast horizon/model run. The weather panel is not an official
+national demand forecast.
+
+TESTING
+-------
+Frontend JavaScript syntax checked; Python backend compiled; headless browser
+smoke test passed with mocked data: 16 widgets rendered, advanced monitor
+calculated divergence/spread/weather/alerts, and no browser JavaScript errors.
+Angel One live authentication and third-party live data were not verified by
+the isolated test. Verify feeds, timestamps, expiry and instrument details in
+your own broker terminal before relying on any signal.
