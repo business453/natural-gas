@@ -1,6 +1,6 @@
 MCX NATURAL GAS INTELLIGENCE DASHBOARD
 Angel One SmartAPI + resilient contract-master loader + free delayed Henry Hub reference quote
-Build: v3.2
+Build: v3.4
 
 WHAT THIS VERSION CONNECTS
 1. MCX Natural Gas: Angel One SmartAPI WebSocket v2 (your authenticated account feed).
@@ -16,6 +16,7 @@ WHAT THIS VERSION CONNECTS
    - A stale Henry Hub quote is excluded from the automatic signal calculation.
 3. US weather: Open-Meteo forecast for six selected US cities, refreshed every 30 minutes.
 4. Rule-based fundamental/momentum dashboard, breakout checklist, risk sizing and JSON snapshot export.
+5. New Open Interest Tracker: plots Angel One MCX price and OI history with a dual-axis chart; automatically classifies long buildup, short covering, short buildup or long unwinding over a selectable lookback (5m, 15m, 30m, 60m or 4h). The widget is collapsible and remembers its open/closed state. When the OI selector is set to Automatic, its score feeds the momentum calculation; manual overrides remain available.
 
 IMPORTANT: This application is read-only. It does NOT place, modify or cancel orders.
 
@@ -50,7 +51,7 @@ DATA TIMING AND LIMITATIONS
 - CME's public delayed futures quotes are delayed by at least 10 minutes. CME says its website market data is for reference and should not validate or replace its licensed real-time feed.
 - For genuine real-time Henry Hub prices, obtain a CME/NYMEX-authorised real-time market-data entitlement from CME or an authorised vendor. There is no reliable, exchange-authorised, unlimited free real-time futures feed assumed in this package.
 - Angel One's average_traded_price field is used as an indicative VWAP proxy only; it may not match a platform's exact intraday VWAP calculation. Verify on your chart before using it.
-- The stream's snapshot mode provides OI, but the dashboard does not automatically classify long build-up/short covering from a single tick. Use prior-session/interval comparisons and set the OI interpretation deliberately.
+- Open-interest history begins when this dashboard connects to the selected contract; it is held in memory and cleared when another contract is connected or the server restarts. The chart's lookback comparison is an intraday heuristic, not a substitute for prior-session OI analysis. The automatic OI classification feeds the momentum score only when the selector is set to Automatic; manual overrides are available.
 - 15-minute candle close, volume-vs-20-bar confirmation and breakout retest remain manual confirmations. A price tick alone does not establish them.
 - The six-city HDD/CDD is a simplified proxy, not the official population-weighted US demand forecast. Compare specialist model revisions and NOAA material.
 - EIA storage actual/consensus are manual inputs. Use the official EIA report and a clearly identified consensus source.
@@ -84,7 +85,13 @@ NatGasWeather: https://natgasweather.com/
 MCX: https://www.mcxindia.com/
 Open-Meteo docs: https://open-meteo.com/en/docs
 
-VERSION 3.3 TESTED PATCH
-- Contract parser now recognizes MCX master segment labels MCX, MCX_FO / mcx_fo, and NCO. Angel One's WebSocket subscription still uses exchangeType=5 (MCX_FO).
-- If a downloaded master has no matching Natural Gas futures, the backend error now includes the exchange segments and candidate Natural Gas rows to help diagnose schema changes.
+VERSION 3.3 PATCH (retained)
+- Contract parser recognizes MCX master segment labels MCX, MCX_FO / mcx_fo, and NCO. Angel One's WebSocket subscription uses exchangeType=5 (MCX_FO).
+- If a downloaded master has no matching Natural Gas futures, the backend error includes exchange segments and candidate Natural Gas rows to help diagnose schema changes.
+
+VERSION 3.4 ADDITIONS
+- Added a collapsible Open Interest Tracker with price and OI trend lines, selectable lookback windows (5m / 15m / 30m / 60m / 4h), live percentage changes and observation count.
+- Added automatic price/OI positioning labels: long buildup, short covering, short buildup and long unwinding. The signal is a heuristic and not a standalone trade instruction.
+- Added in-memory tick history to /api/status, sampled at up to one point per second and downsampled for the browser poll. History resets on contract switch and server restart.
+- The OI selector defaults to Automatic and can be manually overridden. The widget open/closed state is remembered in the browser.
 - No API credentials are included. This application remains read-only and does not place orders.

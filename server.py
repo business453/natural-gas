@@ -42,6 +42,10 @@ STATE: dict[str, Any] = {
 ANGEL_SESSION: dict[str, Any] = {"smart": None, "ws": None, "thread": None}
 CONTRACTS_CACHE: dict[str, Any] = {"loaded_at": 0.0, "contracts": []}
 HH_CACHE: dict[str, Any] = {"loaded_at": 0.0, "quote": None}
+# Intraday history is intentionally held in memory for the currently selected
+# Angel One contract. It is cleared when a different contract is connected.
+OI_HISTORY: list[dict[str, Any]] = []
+MAX_OI_HISTORY = 20000
 
 # Angel One's current SmartAPI docs publish the angelone.in host. Keep the
 # legacy angelbroking.com host as a fallback because both have been used by
@@ -361,6 +365,20 @@ def _save_tick(data: dict[str, Any], contract: dict[str, Any]) -> None:
             STATE["angel"]["status"] = "connected"
             STATE["angel"]["message"] = "Streaming market data"
             STATE["angel"]["last_error"] = None
+            point = {
+                "timestamp_ms": int(time.time() * 1000),
+                "price": quote["price"],
+                "open_interest": quote["open_interest"],
+                "volume": quote["volume"],
+            }
+            # Keep at most one sample per second to avoid storing redundant
+            # high-frequency WebSocket ticks while preserving the trend.
+            if OI_HISTORY and point["timestamp_ms"] - OI_HISTORY[-1]["timestamp_ms"] < 1000:
+                OI_HISTORY[-1] = point
+            else:
+                OI_HISTORY.append(point)
+            if len(OI_HISTORY) > MAX_OI_HISTORY:
+                del OI_HISTORY[: len(OI_HISTORY) - MAX_OI_HISTORY]
     except Exception as exc:
         with STATE_LOCK:
             STATE["angel"]["last_error"] = f"Could not parse market tick: {exc}"
@@ -403,6 +421,7 @@ def angel_connect(body: ConnectRequest):
             raise RuntimeError("Angel One login succeeded but no feed token was returned.")
 
         with STATE_LOCK:
+            OI_HISTORY.clear()
             STATE["angel"].update({
                 "status": "connecting", "message": "Login successful; opening MCX market-data stream…",
                 "connected": False, "contract": {k: v for k, v in contract.items() if k != "expiry_sort"},
@@ -497,8 +516,14 @@ def status():
     with STATE_LOCK:
         angel = dict(STATE["angel"])
         hh = dict(STATE["henry_hub"])
+        # Downsample the in-memory tick history for the two-second dashboard poll.
+        history = list(OI_HISTORY)
+        stride = max(1, (len(history) + 899) // 900)
+        oi_history = history[::stride]
+        if history and (not oi_history or oi_history[-1] is not history[-1]):
+            oi_history = [*oi_history, history[-1]]
     # Strip any non-serialisable values defensively.
-    return {"angel": angel, "henry_hub": hh}
+    return {"angel": angel, "henry_hub": hh, "oi_history": oi_history}
 
 
 if __name__ == "__main__":
